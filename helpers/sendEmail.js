@@ -5,7 +5,6 @@ const { USER_NAME, USER_PASSWORD } = process.env;
 const nodemailerConfig = {
   host: "smtp.mailgun.org",
   port: 587,
-  secure: true,
   auth: {
     user: USER_NAME,
     pass: USER_PASSWORD,
