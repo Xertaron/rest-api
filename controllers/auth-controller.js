@@ -37,7 +37,11 @@ const register = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Сonfirm your registration",
-    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to confirm your registration</a>`,
+    html: `<button style="background-color: lightgreen; border-radius: 4px;">
+    <a style="display: block; text-decoration: none; margin: 2vh 4vw; font-weight: 700; font-size: 20px;" target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationToken}">
+     Click to confirm your registration
+     </a>
+     </button>`,
   };
 
   await sendEmail(verifyEmail);
@@ -83,7 +87,11 @@ const resendVerify = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Сonfirm your registration",
-    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationToken}">Click to confirm your registration</a>`,
+    html: `<button style="background-color: lightgreen; border-radius: 4px;">
+    <a style="display: block; text-decoration: none; margin: 2vh 4vw; font-weight: 700; font-size: 20px;" target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationToken}">
+     Click to confirm your registration
+     </a>
+     </button>`,
   };
 
   await sendEmail(verifyEmail);
