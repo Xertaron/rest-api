@@ -72,7 +72,7 @@ const loginSchema = Joi.object({
   }),
 });
 
-const updateSubscriptionSchema = Joi.object({
+const updateSchema = Joi.object({
   name: Joi.string().min(1).max(20).optional(),
   email: Joi.string().pattern(emailRegexp).optional(),
   subscription: Joi.string()
@@ -85,7 +85,7 @@ const schemas = {
   registerSchema,
   userEmailSchema,
   loginSchema,
-  updateSubscriptionSchema,
+  updateSchema,
 };
 
 const User = model("user", userSchema);
