@@ -73,12 +73,12 @@ const loginSchema = Joi.object({
 });
 
 const updateSubscriptionSchema = Joi.object({
+  name: Joi.string().min(1).max(20).optional(),
+  email: Joi.string().pattern(emailRegexp).optional(),
   subscription: Joi.string()
     .valid(...subscriptionList)
-    .required()
-    .messages({
-      "any.required": "Missing field 'subscription'",
-    }),
+    .optional(),
+  avatarUrl: Joi.string().uri().optional(),
 });
 
 const schemas = {
