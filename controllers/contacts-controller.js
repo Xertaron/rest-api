@@ -16,6 +16,10 @@ const getAllContacts = async (req, res) => {
     }
   ).populate("owner", "email subscription");
 
+  if (result.length === 0) {
+    return res.json({ message: "This user has no contacts"});
+  }
+
   res.json(result);
 };
 
@@ -64,7 +68,7 @@ const updateStatusContact = async (req, res) => {
 const removeContact = async (req, res) => {
   const { id } = req.params;
   const { _id: owner } = req.user;
-  const result = await Contact.findOneAndRemove({ _id: id, owner });
+  const result = await Contact.findOneAndDelete({ _id: id, owner });
   if (!result) {
     throw HttpError(404, `Not found`);
   }

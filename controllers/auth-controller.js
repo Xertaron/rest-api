@@ -12,8 +12,6 @@ const { ctrlWrapper } = require("../decorators");
 
 const { SECRET_KEY, BASE_URL } = process.env;
 
-const avatarDir = path.resolve("public", "avatars");
-
 const register = async (req, res) => {
   const { email, password, subscription } = req.body;
 
@@ -23,7 +21,7 @@ const register = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  const avatarUrl = gravatar.url(email);
+  const avatarUrl = `${req.protocol}://${req.get("host")}/avatars/${fileName}`;
   const verificationToken = randomUUID();
 
   const result = await User.create({
@@ -165,18 +163,14 @@ const logout = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { _id } = req.user;
-  const { name, email, subscription, avatarUrl } = req.body;
+  const { name, email, subscription } = req.body;
 
   const updateData = {
     ...(name && {name}),
     ...(email && {email}),
     ...(subscription && {subscription}),
-    ...(avatarUrl && {avatarUrl}),
   };
-  if (req.file) {
-    const avatarUrl = path.join("avatars", `${_id}_${req.file.originalname}`);
-    updateData.avatarUrl = avatarUrl;
-  }
+  
   const result = await User.findByIdAndUpdate(_id, updateData, {
     new: true,
   });
@@ -191,6 +185,7 @@ const updateUser = async (req, res) => {
 const updateAvatar = async (req, res, next) => {
   if (req.file) {
     const { size, path: tempUpload, originalname } = req.file;
+
     if (size > 2 * 1024 * 1024) {
       throw HttpError(400, "Avatar size exceeds the limit (2MB)");
     }
@@ -205,11 +200,14 @@ const updateAvatar = async (req, res, next) => {
 
     const { _id } = req.user;
     const fileName = `${_id}_${originalname}`;
-    const publicUpload = path.join(avatarDir, fileName);
+    
+    const avatarDir = path.join(__dirname, "../public/avatars");
+    await fs.mkdir(avatarDir, { recursive: true });
 
+    const publicUpload = path.join(avatarDir, fileName);
     await fs.rename(tempUpload, publicUpload);
 
-    const avatarUrl = path.join("avatars", fileName);
+    const avatarUrl = `${req.protocol}://${req.get("host")}/avatars/${fileName}`;
 
     await User.findByIdAndUpdate(_id, { avatarUrl });
 
@@ -219,6 +217,7 @@ const updateAvatar = async (req, res, next) => {
   }
   next();
 };
+
 
 
 module.exports = {
