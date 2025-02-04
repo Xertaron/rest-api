@@ -30,8 +30,8 @@ router.post("/logout", authenticate, AuthController.logout);
 router.patch(
   "/update",
   authenticate,
-  validateBody(schemas.updateSubscriptionSchema),
-  AuthController.updateSubscription
+  validateBody(schemas.updateSchema),
+  AuthController.updateUser
 );
 
 router.patch(
