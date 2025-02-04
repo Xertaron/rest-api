@@ -87,7 +87,7 @@ const resendVerify = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Сonfirm your registration",
-    html: `<a style="text-decoration: none;" target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationToken}">
+    html: `<a style="text-decoration: none;" target="_blank" href="${BASE_URL}/api/auth/verify/${user.verificationToken}">
 <button style="background-color: lightgreen; border-radius: 4px; padding: 2vh 4vw; font-weight: 700; font-size: 20px;">
      Click to confirm your registration
     </button>
@@ -140,6 +140,9 @@ const login = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
+  if(!req.user){
+    return res.status(401).json({message: "No user is currently logged in"});
+  }
   const { subscription, email } = req.user;
 
   res.json({
@@ -149,10 +152,13 @@ const getCurrentUser = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+  if (!req.user) {
+    throw HttpError(401, "Not authorized");
+  }
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
 
-  res.status(204).json({
+  res.status(200).json({
     message: "Logout success",
   });
 };
